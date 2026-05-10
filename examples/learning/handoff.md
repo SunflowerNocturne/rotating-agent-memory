@@ -1,5 +1,13 @@
 # Handoff
 
+## Persistence Rule
+
+Before starting or resuming work, read both `goal.md` and `handoff.md`.
+
+Update `goal.md` only when the learning goal, constraints, direction, success criteria, or "do not do" guidance changes.
+
+Update this file after each completed operation.
+
 ## Current Status
 
 The learner understands that likelihood treats observed data as fixed and parameters as the variable being scored.

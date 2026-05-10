@@ -1,5 +1,13 @@
 # Handoff
 
+## Persistence Rule
+
+Before starting or resuming work, read both `goal.md` and `handoff.md`.
+
+Update `goal.md` only when the goal, constraints, direction, success criteria, or "do not do" guidance changes.
+
+Update this file after each completed operation.
+
 ## Current Status
 
 Project scaffold inspected. The app uses Vite, React, and plain CSS.

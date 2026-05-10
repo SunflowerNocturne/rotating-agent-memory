@@ -18,6 +18,8 @@ Build a usable task tracker web app with project lists, task CRUD, status filter
 
 ## Persistence Rule
 
+Before starting or resuming work, read both `goal.md` and `handoff.md`.
+
 Update this file only when the goal, constraints, direction, success criteria, or "do not do" guidance changes.
 
 Update `handoff.md` after each completed operation.

@@ -42,7 +42,8 @@ Do not use for simple one-shot answers, tiny edits, or short commands unless the
 
 2. Create `goal.md` and `handoff.md`.
 
-3. Write the persistence rule into the files themselves:
+3. Write the persistence rule into both files themselves:
+   Before starting or resuming work, read both `goal.md` and `handoff.md`.
    Any important diagnosis, action, risk, result, backup, verification, or next-step change must be reflected in `goal.md` or `handoff.md`.
 
 4. Keep the files current during the task.
@@ -70,7 +71,7 @@ Do not use for simple one-shot answers, tiny edits, or short commands unless the
 11. Before compacting, pausing, restarting, switching sessions, or leaving, synchronize both files.
     Include the current state, completed work, unfinished work, things not to do, and the first step after resuming.
 
-12. On resume, read `goal.md` and `handoff.md` before continuing.
+12. Before starting or resuming work, read `goal.md` and `handoff.md` before continuing.
     Do not rely on memory. Do not repeat completed work. Do not undo existing fixes unless explicitly required.
 
 13. Final verification must be recorded.
