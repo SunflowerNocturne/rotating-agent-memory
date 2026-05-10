@@ -103,7 +103,6 @@ The installer copies the skill to:
 
 ```text
 ~/.codex/skills/goal-handoff-persistence/SKILL.md
-~/.claude/skills/goal-handoff-persistence.md
 ~/.claude/skills/goal-handoff-persistence/SKILL.md
 ```
 
@@ -122,7 +121,6 @@ For Claude Code:
 
 ```bash
 mkdir -p ~/.claude/skills/goal-handoff-persistence
-cp skills/claude-code/goal-handoff-persistence.md ~/.claude/skills/goal-handoff-persistence.md
 cp skills/claude-code/goal-handoff-persistence/SKILL.md ~/.claude/skills/goal-handoff-persistence/SKILL.md
 ```
 

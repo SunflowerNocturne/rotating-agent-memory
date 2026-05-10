@@ -11,12 +11,9 @@ install_codex() {
 }
 
 install_claude() {
-  base="$HOME/.claude/skills"
-  target="$base/goal-handoff-persistence"
+  target="$HOME/.claude/skills/goal-handoff-persistence"
   mkdir -p "$target"
-  cp "$ROOT_DIR/skills/claude-code/goal-handoff-persistence.md" "$base/goal-handoff-persistence.md"
   cp "$ROOT_DIR/skills/claude-code/goal-handoff-persistence/SKILL.md" "$target/SKILL.md"
-  printf 'Installed Claude Code skill to %s\n' "$base/goal-handoff-persistence.md"
   printf 'Installed Claude Code skill to %s\n' "$target/SKILL.md"
 }
 
