@@ -2,6 +2,8 @@
 
 A tiny Goal + Handoff protocol for AI coding agents that forget.
 
+If context compaction turns your project into hearsay, give the next agent a written handoff.
+
 Your agent is not one continuous engineer. In long projects, it behaves more like a rotating crew of short-lived agents: one works for a while, context compacts, another takes over, and the project survives only if the handoff is good.
 
 Rotating Agent Memory gives Claude Code, Codex, and similar agents a lightweight external memory layer:
@@ -26,6 +28,26 @@ Without durable task memory, a fresh agent often has to rediscover:
 - what the next safe step is
 
 This protocol assumes another agent with no reliable memory may take over at any time.
+
+## Before And After
+
+Without this protocol, a fresh agent after compaction often starts like this:
+
+```text
+I need to inspect the project to understand what is going on.
+```
+
+With `goal.md` and `handoff.md`, it can start like this:
+
+```text
+Goal: fix login persistence without rotating production secrets.
+Current finding: login creates a token, but middleware rejects it as signature invalid.
+Evidence: login handler logs session created; middleware logs token signature invalid.
+Next step: compare secret lookup in createSession and validateToken, then add a focused test.
+Do not do: do not delete sessions or rotate secrets until the mismatch is confirmed.
+```
+
+The point is not to write more. The point is to stop rediscovering the same project.
 
 ## When To Use It
 
@@ -111,8 +133,24 @@ See:
 - `examples/coding-project/`
 - `examples/debugging/`
 - `examples/learning/`
+- `demos/context-compaction.md`
 
 Each example shows the two-file pattern without turning the task into a documentation ritual.
+
+## Share Pitch
+
+```text
+AI coding agents do not really have memory.
+
+A long project is not handled by one continuous engineer.
+It is handled by rotating short-lived agents after context compaction, restarts, and new chats.
+
+Rotating Agent Memory is a tiny Goal + Handoff protocol:
+- goal.md = why, constraints, success criteria
+- handoff.md = current state, evidence, risks, next step
+
+No database. No framework. Just two Markdown files that keep agent work resumable.
+```
 
 ## Design Philosophy
 
