@@ -17,6 +17,8 @@ No database. No framework. No giant memory system. Just two Markdown files that 
 
 Context compaction is not real memory. It is lossy oral tradition.
 
+If a long task relies only on compacted summaries or asks a fresh agent to re-review the project with no prior context, the project can drift or collapse. The next agent may not know the goal, the structure, the next step, what was already done, what failed, or which risks must not be touched.
+
 Without durable task memory, a fresh agent often has to rediscover:
 
 - what the project is trying to do
