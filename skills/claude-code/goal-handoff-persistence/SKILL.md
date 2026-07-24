@@ -23,7 +23,7 @@ Assume another agent with no reliable memory may take over at any time. Write `g
 These rules override any looser wording elsewhere in this skill:
 
 1. **Goal write gate**: Update `goal.md` if and only if the user explicitly changes the task objective, deliverable, scope, core acceptance criteria, or core constraints, or explicitly asks to update `goal.md`. Never change it for routine progress, research, diagnostics, implementation, failures, fixes, validation, or completion status.
-2. **Bounded file guard**: Before fully reading, updating, compacting, pausing, resuming, or handing off, check the sizes of `goal.md` and `handoff.md`. If `handoff.md` is larger than 32,000 bytes or `goal.md` is larger than 16,000 bytes, run the Bounded Archive Protocol below before any full read. Never read an oversized `goal.md` or `handoff.md` completely into context.
+2. **Bounded file guard**: Before fully reading, updating, compacting, pausing, resuming, or handing off, check the sizes of `goal.md` and `handoff.md`. If `handoff.md` is larger than 128,000 bytes or `goal.md` is larger than 32,000 bytes, run the Bounded Archive Protocol below before any full read. Never read an oversized `goal.md` or `handoff.md` completely into context.
 3. **Handoff write barrier**: Immediately after every completed operation, update `handoff.md` before starting the next operation. Record what was attempted, inputs or commands, success or failure, evidence and artifact paths, state impact, and the next action. For a long-running operation, record the intended operation before launching it, then record its result immediately when it finishes or fails. Keep the updated `handoff.md` under the size threshold; if the update would exceed it, archive first.
 4. **Post-compaction recovery gate**: After any context compaction, summary takeover, session/model/agent switch, or suspected context loss, stop. The first action must be to check the sizes of `goal.md` and `handoff.md`, run archive rotation if needed, and then read the current bounded `goal.md` and `handoff.md` completely from beginning to end. Do not run another command, continue prior work, or rely on the compacted summary until the current bounded files have been fully read.
 
@@ -35,8 +35,8 @@ The active `goal.md` and `handoff.md` are resume files, not permanent raw histor
 
 Default hard limits:
 
-- Archive `handoff.md` when it is larger than 32,000 bytes.
-- Archive `goal.md` when it is larger than 16,000 bytes.
+- Archive `handoff.md` when it is larger than 128,000 bytes.
+- Archive `goal.md` when it is larger than 32,000 bytes.
 
 Use byte size rather than token count because it is fast, deterministic, and available in every shell (`wc -c goal.md handoff.md`). Smaller limits are allowed when the task is especially sensitive to context budget.
 
@@ -143,7 +143,7 @@ Keep `goal.md` stable and strategic. It should answer:
 
 Do not update `goal.md` unless the user explicitly changes one of those goal-level items or explicitly requests a goal-file edit.
 
-If `goal.md` grows beyond 16,000 bytes, archive it and recreate a short current-goal file. Long completed goals and old branches belong in `archive/`, not in the active resume file.
+If `goal.md` grows beyond 32,000 bytes, archive it and recreate a short current-goal file. Long completed goals and old branches belong in `archive/`, not in the active resume file.
 
 Keep `handoff.md` operational and easy to resume from. It should answer:
 
@@ -159,7 +159,7 @@ Keep `handoff.md` operational and easy to resume from. It should answer:
 
 It must always reflect the most recently completed operation before another operation begins.
 
-If `handoff.md` grows beyond 32,000 bytes, archive it and recreate a short current-handoff file. The active handoff should contain enough current state to resume, plus archive paths for selective historical lookup. Do not keep appending old history until the file becomes unsafe to reread.
+If `handoff.md` grows beyond 128,000 bytes, archive it and recreate a short current-handoff file. The active handoff should contain enough current state to resume, plus archive paths for selective historical lookup. Do not keep appending old history until the file becomes unsafe to reread.
 
 Do not turn `handoff.md` into a raw chat transcript. It should be a usable handoff document.
 

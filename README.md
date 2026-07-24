@@ -81,7 +81,7 @@ Update `goal.md` only when the goal, constraints, success criteria, direction, o
 
 Update `handoff.md` after each completed operation: diagnostics, edits, commands, backups, failures, verification, and user-confirmed decisions.
 
-Keep the active files bounded. Before resuming, compacting, pausing, or handing off, check file size. If `handoff.md` grows beyond 32,000 bytes, or `goal.md` grows beyond 16,000 bytes, move the oversized file into a timestamped `archive/` entry and recreate a concise current file at the original path.
+Keep the active files bounded. Before resuming, compacting, pausing, or handing off, check file size. If `handoff.md` grows beyond 128,000 bytes, or `goal.md` grows beyond 32,000 bytes, move the oversized file into a timestamped `archive/` entry and recreate a concise current file at the original path.
 
 Archived files remain searchable evidence. They are not part of the default resume read; use targeted searches or bounded slices when old history is needed.
 
