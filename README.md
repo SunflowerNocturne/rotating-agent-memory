@@ -81,6 +81,10 @@ Update `goal.md` only when the goal, constraints, success criteria, direction, o
 
 Update `handoff.md` after each completed operation: diagnostics, edits, commands, backups, failures, verification, and user-confirmed decisions.
 
+Keep the active files bounded. Before resuming, compacting, pausing, or handing off, check file size. If `handoff.md` grows beyond 32,000 bytes, or `goal.md` grows beyond 16,000 bytes, move the oversized file into a timestamped `archive/` entry and recreate a concise current file at the original path.
+
+Archived files remain searchable evidence. They are not part of the default resume read; use targeted searches or bounded slices when old history is needed.
+
 ## Install
 
 Clone this repo, then run:
@@ -165,6 +169,7 @@ It is a handoff protocol for rotating agents:
 - prefer reversible fixes
 - distinguish real issues from noise
 - make the next step obvious
+- archive stale history instead of appending forever
 
 Write for the next agent, not for the current chat.
 
