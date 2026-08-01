@@ -18,8 +18,4 @@ Learn the core ideas of maximum likelihood estimation well enough to solve exam-
 
 ## Persistence Rule
 
-Before starting or resuming work, read both `goal.md` and `handoff.md`.
-
-Update this file only when the learning goal, constraints, direction, success criteria, or "do not do" guidance changes.
-
-Update `handoff.md` after each completed operation.
+Use `goal-handoff-persistence`; goal <=6000 bytes; handoff <=64000 bytes.

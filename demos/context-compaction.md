@@ -54,27 +54,21 @@ Direction: diagnose before changing auth logic; prefer reversible fixes.
 `handoff.md` says:
 
 ```text
-Current status: narrowed to token validation after login.
+Current Snapshot:
+- Login creates a session token, but middleware rejects the next request with
+  "token signature invalid".
 
-Completed:
-- Reproduced login success followed by redirect.
-- Confirmed login handler creates a session token.
-- Confirmed middleware rejects the next request.
+Decisions And Constraints:
+- Do not delete sessions or rotate secrets before the mismatch is confirmed.
 
-Evidence:
-- Login handler logs "session created".
-- Middleware logs "token signature invalid".
+Artifacts And Rollback:
 - Relevant files: src/auth/login.ts, src/auth/session.ts, src/middleware.ts.
 
-Hypothesis:
-- createSession and validateToken may read different secret sources.
+Open Risks And Uncertainty:
+- Unconfirmed: createSession and validateToken may read different secret sources.
 
-Next step:
-- Compare secret lookup paths and add a focused test before changing behavior.
-
-Do not do:
-- Do not delete sessions.
-- Do not rotate secrets until the mismatch is confirmed.
+Next Action:
+1. Compare secret lookup paths and add a focused test before changing behavior.
 ```
 
 The next agent can continue from the actual state instead of rediscovering it.
@@ -83,7 +77,9 @@ The next agent can continue from the actual state instead of rediscovering it.
 
 `goal.md` should be stable. It stores why the work exists, what success means, and what must not drift.
 
-`handoff.md` should be operational. It stores where the work is now, what was tried, what evidence exists, and what to do next.
+`handoff.md` should be operational and mutable. It stores only the current state,
+active decisions, key artifacts, unresolved risks, and one next action. Completed
+operations and superseded hypotheses are removed rather than accumulated.
 
 One file can work, but two files create a clean split:
 

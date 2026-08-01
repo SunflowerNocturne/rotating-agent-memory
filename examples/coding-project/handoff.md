@@ -1,36 +1,21 @@
 # Handoff
 
-## Persistence Rule
+Persistence: use `goal-handoff-persistence`; goal <=6000 bytes; handoff <=64000 bytes.
 
-Before starting or resuming work, read both `goal.md` and `handoff.md`.
+## Current Snapshot
 
-Update `goal.md` only when the goal, constraints, direction, success criteria, or "do not do" guidance changes.
+- The scaffold uses Vite, React, plain CSS, and npm; the starter screen is still active.
+- There is no backend or database layer.
 
-Update this file after each completed operation.
+## Decisions And Constraints
 
-## Current Status
+- Keep persistence in local storage. Do not add a backend or rewrite the build setup.
 
-Project scaffold inspected. The app uses Vite, React, and plain CSS.
+## Artifacts And Rollback
 
-## Completed Operations
+- Entry points: `src/main.jsx`, `src/App.jsx`, and `src/App.css`.
+- Dependency evidence: `package.json`.
 
-- Confirmed package manager: npm.
-- Located app entry points:
-  - `src/main.jsx`
-  - `src/App.jsx`
-  - `src/App.css`
-- Confirmed there is no backend or existing database layer.
+## Next Action
 
-## Evidence
-
-- `package.json` lists `vite`, `react`, and `react-dom`.
-- `src/App.jsx` currently contains the starter screen.
-
-## Next Step
-
-Replace the starter screen with a local-storage task tracker and run the dev server to verify the workflow.
-
-## Do Not Do
-
-- Do not add a backend.
-- Do not rewrite the build setup.
+1. Replace the starter screen with the local-storage task tracker, then verify the workflow in the dev server.

@@ -1,41 +1,23 @@
 # Handoff
 
-## Persistence Rule
+Persistence: use `goal-handoff-persistence`; goal <=6000 bytes; handoff <=64000 bytes.
 
-Before starting or resuming work, read both `goal.md` and `handoff.md`.
+## Current Snapshot
 
-Update `goal.md` only when the goal, constraints, direction, success criteria, or "do not do" guidance changes.
+- Login creates a session token, but middleware rejects the next request with `token signature invalid`; credential verification is not the failing stage.
 
-Update this file after each completed operation.
+## Decisions And Constraints
 
-## Current Status
+- Diagnose before changing auth behavior. Do not delete sessions or rotate production secrets without explicit approval.
 
-The bug is narrowed to token validation after login, not credential verification.
+## Artifacts And Rollback
 
-## Completed Operations
+- Relevant files: `src/auth/login.ts`, `src/auth/session.ts`, and `src/middleware.ts`.
 
-- Reproduced login success followed by immediate redirect.
-- Checked login handler and confirmed it returns a session token.
-- Checked middleware and found it rejects the next request.
+## Open Risks And Uncertainty
 
-## Evidence
+- Unconfirmed: token signing and validation may read different secret sources.
 
-- Login handler logs `session created`.
-- Middleware logs `token signature invalid` on the next request.
-- Relevant files:
-  - `src/auth/login.ts`
-  - `src/auth/session.ts`
-  - `src/middleware.ts`
+## Next Action
 
-## Current Hypothesis
-
-Token signing and token validation may be reading different secret sources.
-
-## Next Step
-
-Compare the secret lookup path in `createSession` and `validateToken`, then add a focused test before changing behavior.
-
-## Do Not Do
-
-- Do not delete sessions.
-- Do not rotate secrets until the mismatch is confirmed.
+1. Compare secret lookup in `createSession` and `validateToken`, then add a focused test before changing behavior.

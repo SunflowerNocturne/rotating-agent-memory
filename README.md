@@ -9,7 +9,8 @@ Your agent is not one continuous engineer. In long projects, it behaves more lik
 Rotating Agent Memory gives Claude Code, Codex, and similar agents a lightweight external memory layer:
 
 - `goal.md` keeps the stable goal, constraints, direction, and success criteria.
-- `handoff.md` keeps the current state, evidence, completed work, risks, backups, failures, and next steps.
+- `handoff.md` keeps only the current state, active decisions, key artifacts,
+  unresolved risks, and one next action.
 
 No database. No framework. No giant memory system. Just two Markdown files that make long-running agent work resumable.
 
@@ -79,11 +80,42 @@ handoff.md
 
 Update `goal.md` only when the goal, constraints, success criteria, direction, or "do not do" guidance meaningfully changes.
 
-Update `handoff.md` after each completed operation: diagnostics, edits, commands, backups, failures, verification, and user-confirmed decisions.
+Treat `handoff.md` as a mutable resume snapshot, not an operation log. Reconcile
+it only when resume-critical state changes. Replace, merge, or delete stale facts
+instead of appending a record merely because an operation occurred.
 
-Keep the active files bounded. Before resuming, compacting, pausing, or handing off, check file size. If `handoff.md` grows beyond 128,000 bytes, or `goal.md` grows beyond 32,000 bytes, move the oversized file into a timestamped `archive/` entry and recreate a concise current file at the original path.
+A fact belongs in the handoff only when forgetting it could cause an incorrect
+or unsafe next action, lose a decision or rollback path, repeat expensive work,
+hide an unresolved risk, or prevent direct resumption. Routine reads, status
+checks, no-op probes, repeated validation, raw output, completed steps, and
+superseded hypotheses do not belong there by default.
+
+Keep the active files bounded using decimal byte counts:
+
+- `goal.md` must not exceed 6,000 bytes.
+- `handoff.md` must not exceed 64,000 bytes.
+
+Before fully reading or writing either file, check its size. Move an oversized
+file into a timestamped `archive/` entry and reconstruct a concise current file
+from bounded slices and targeted searches. Never read an oversized archive in
+full merely to summarize it.
 
 Archived files remain searchable evidence. They are not part of the default resume read; use targeted searches or bounded slices when old history is needed.
+
+Use this compact handoff shape and omit empty sections:
+
+```markdown
+# Handoff
+
+## Current Snapshot
+## Decisions And Constraints
+## Artifacts And Rollback
+## Open Risks And Uncertainty
+## Next Action
+```
+
+There must be exactly one current next action. At each milestone, rebuild the
+handoff around the new live state and remove the implementation diary.
 
 ## Install
 
@@ -151,7 +183,7 @@ It is handled by rotating short-lived agents after context compaction, restarts,
 
 Rotating Agent Memory is a tiny Goal + Handoff protocol:
 - goal.md = why, constraints, success criteria
-- handoff.md = current state, evidence, risks, next step
+- handoff.md = current state, active decisions, risks, artifacts, one next step
 
 No database. No framework. Just two Markdown files that keep agent work resumable.
 ```
@@ -164,12 +196,13 @@ It is a handoff protocol for rotating agents:
 
 - keep the goal stable
 - keep the current state resumable
-- record evidence
+- admit only resume-critical facts
+- replace or delete superseded state
 - back up before risky changes
 - prefer reversible fixes
 - distinguish real issues from noise
 - make the next step obvious
-- archive stale history instead of appending forever
+- archive selectively useful history instead of appending forever
 
 Write for the next agent, not for the current chat.
 

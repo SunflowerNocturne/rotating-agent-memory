@@ -1,33 +1,16 @@
 # Handoff
 
-## Persistence Rule
+Persistence: use `goal-handoff-persistence`; goal <=6000 bytes; handoff <=64000 bytes.
 
-Before starting or resuming work, read both `goal.md` and `handoff.md`.
+## Current Snapshot
 
-Update `goal.md` only when the learning goal, constraints, direction, success criteria, or "do not do" guidance changes.
+- The learner understands that likelihood holds observed data fixed and scores parameter values.
+- The learner can derive a Bernoulli likelihood and convert it to log-likelihood, but still hesitates when support depends on the parameter.
 
-Update this file after each completed operation.
+## Decisions And Constraints
 
-## Current Status
+- Continue from first principles and connect every formula to meaning; do not introduce asymptotic theory yet.
 
-The learner understands that likelihood treats observed data as fixed and parameters as the variable being scored.
+## Next Action
 
-## Completed Operations
-
-- Explained probability versus likelihood.
-- Derived a Bernoulli likelihood from independent observations.
-- Converted product likelihood to log-likelihood.
-
-## Evidence Of Understanding
-
-- Learner correctly stated that MLE chooses the parameter value that makes the observed sample most plausible.
-- Learner still hesitates when support constraints depend on the parameter.
-
-## Next Step
-
-Teach one support-dependent example, then contrast it with the Bernoulli example.
-
-## Do Not Do
-
-- Do not jump to asymptotic theory yet.
-- Do not present formulas without explaining what each term is scoring.
+1. Teach one support-dependent example, then contrast it with the Bernoulli case.

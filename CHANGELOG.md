@@ -1,5 +1,31 @@
 # Changelog
 
+## v0.3.0 - Concise State Snapshots
+
+This release changes `handoff.md` from an operation-by-operation record into a
+mutable, successor-oriented snapshot of current state.
+
+Compared with v0.2.1:
+
+- Replaces the unconditional post-operation write rule with a resume-critical
+  state-change gate.
+- Requires agents to reconcile existing state by replacing, merging, and
+  deleting stale facts instead of appending chronology.
+- Defines a fixed compact handoff shape: current snapshot, decisions and
+  constraints, artifacts and rollback, open risks and uncertainty, and exactly
+  one next action.
+- Adds an explicit admission test and a do-not-record list for status requests,
+  routine reads, no-op probes, repeated validation, raw output, completed steps,
+  and superseded hypotheses.
+- Adds milestone rebasing, unrelated-scope splitting, and optional logs for work
+  that genuinely needs an audit trail.
+- Uses exact decimal hard limits of 6,000 bytes for `goal.md` and 64,000 bytes for
+  `handoff.md`.
+- Reconstructs oversized active files using bounded slices and targeted searches
+  so archive rotation does not recreate a context-exhaustion loop.
+
+The v0.2.1, v0.2.0, and v0.1.0 tags remain available as rollback points.
+
 ## v0.2.1 - Relax Archive Thresholds
 
 This release keeps the bounded archive rotation behavior from v0.2.0, but raises the default limits so normal long-running work has more room before rotation:
