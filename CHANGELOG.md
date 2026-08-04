@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.3.1 - Knowledge Checkpoints
+
+This release corrects an over-compression failure in v0.3.0: agents could omit
+valuable conclusions from file reading and web research merely because no file
+or external state had changed, forcing the same discovery work after every
+context compaction.
+
+Compared with v0.3.0:
+
+- Expands persistence from resume-critical state changes to resume-critical
+  state **or working-understanding** changes.
+- Requires a synthesized knowledge checkpoint after roughly 3-5 substantive
+  sources, when a research subproblem reaches a conclusion, and before the
+  research-to-implementation transition.
+- Clarifies that agents should omit the chronology of reads and searches while
+  retaining the diagnosis, source map, intended change, rationale, invariants,
+  and unresolved questions those sources establish.
+- Adds a Working Understanding / Implementation Brief under the existing current
+  snapshot when discovery has occurred.
+- Makes the No-Reread Test the primary handoff acceptance criterion: a fresh
+  agent must be able to perform the next action without repeating the completed
+  broad investigation.
+- Adds optional `notes/active-research.md` for source-level detail while requiring
+  the handoff itself to remain sufficient.
+- Keeps the exact decimal limits of 6,000 bytes for `goal.md` and 64,000 bytes for
+  `handoff.md`.
+
+The v0.3.0 and all earlier tags remain available unchanged as rollback points.
+
 ## v0.3.0 - Concise State Snapshots
 
 This release changes `handoff.md` from an operation-by-operation record into a

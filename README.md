@@ -9,8 +9,9 @@ Your agent is not one continuous engineer. In long projects, it behaves more lik
 Rotating Agent Memory gives Claude Code, Codex, and similar agents a lightweight external memory layer:
 
 - `goal.md` keeps the stable goal, constraints, direction, and success criteria.
-- `handoff.md` keeps only the current state, active decisions, key artifacts,
-  unresolved risks, and one next action.
+- `handoff.md` keeps the current state, synthesized working understanding,
+  active decisions, key artifacts, unresolved risks, implementation brief, and
+  one next action.
 
 No database. No framework. No giant memory system. Just two Markdown files that make long-running agent work resumable.
 
@@ -81,14 +82,23 @@ handoff.md
 Update `goal.md` only when the goal, constraints, success criteria, direction, or "do not do" guidance meaningfully changes.
 
 Treat `handoff.md` as a mutable resume snapshot, not an operation log. Reconcile
-it only when resume-critical state changes. Replace, merge, or delete stale facts
-instead of appending a record merely because an operation occurred.
+it when resume-critical state **or working understanding** changes. Replace,
+merge, or delete stale facts instead of appending a record merely because an
+operation occurred.
 
 A fact belongs in the handoff only when forgetting it could cause an incorrect
 or unsafe next action, lose a decision or rollback path, repeat expensive work,
-hide an unresolved risk, or prevent direct resumption. Routine reads, status
-checks, no-op probes, repeated validation, raw output, completed steps, and
-superseded hypotheses do not belong there by default.
+hide an unresolved risk, lose an implementation rationale, or prevent direct
+resumption. Do not record the bare fact that a file or webpage was read; record
+the actionable conclusion, source map, intended change, invariants, and open
+questions produced by that research. Status checks, no-op probes, repeated
+validation, raw output, completed steps, and superseded hypotheses do not belong
+there by default.
+
+After roughly 3-5 substantive files or sources, after resolving a research
+subproblem, and before moving from inspection to implementation, write a
+knowledge checkpoint. Synthesize what the sources establish instead of listing
+the read operations.
 
 Keep the active files bounded using decimal byte counts:
 
@@ -116,6 +126,12 @@ Use this compact handoff shape and omit empty sections:
 
 There must be exactly one current next action. At each milestone, rebuild the
 handoff around the new live state and remove the implementation diary.
+
+The handoff must pass the **No-Reread Test**: a fresh agent with no chat history
+must be able to perform the stated next action from `goal.md` and `handoff.md`
+without repeating the completed broad investigation, code reading, or web
+research. It may open a specifically referenced file at the edit location. If it
+must rediscover why or how to act, the handoff is too short.
 
 ## Install
 

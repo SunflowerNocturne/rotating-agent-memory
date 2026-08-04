@@ -57,18 +57,24 @@ Direction: diagnose before changing auth logic; prefer reversible fixes.
 Current Snapshot:
 - Login creates a session token, but middleware rejects the next request with
   "token signature invalid".
+- Working understanding: createSession in src/auth/session.ts signs the token;
+  validateToken in src/middleware.ts performs the failing verification. The
+  remaining comparison is their secret lookup path, not the credential flow.
 
 Decisions And Constraints:
 - Do not delete sessions or rotate secrets before the mismatch is confirmed.
 
 Artifacts And Rollback:
-- Relevant files: src/auth/login.ts, src/auth/session.ts, src/middleware.ts.
+- src/auth/login.ts establishes that credential verification succeeds.
+- src/auth/session.ts:createSession is the signing path.
+- src/middleware.ts:validateToken is the failing validation path.
 
 Open Risks And Uncertainty:
 - Unconfirmed: createSession and validateToken may read different secret sources.
 
 Next Action:
-1. Compare secret lookup paths and add a focused test before changing behavior.
+1. Compare secret lookup in createSession and validateToken, then add a focused
+   test that reproduces the mismatch before changing behavior.
 ```
 
 The next agent can continue from the actual state instead of rediscovering it.
@@ -77,9 +83,12 @@ The next agent can continue from the actual state instead of rediscovering it.
 
 `goal.md` should be stable. It stores why the work exists, what success means, and what must not drift.
 
-`handoff.md` should be operational and mutable. It stores only the current state,
-active decisions, key artifacts, unresolved risks, and one next action. Completed
-operations and superseded hypotheses are removed rather than accumulated.
+`handoff.md` should be operational and mutable. It stores the current state,
+synthesized working understanding, active decisions, key artifacts, unresolved
+risks, implementation brief, and one next action. Completed operations and
+superseded hypotheses are removed rather than accumulated. A fresh agent must
+not need to repeat the source-reading phase to understand why the next action is
+correct.
 
 One file can work, but two files create a clean split:
 
