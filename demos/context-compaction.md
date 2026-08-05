@@ -33,7 +33,21 @@ Likely failure modes:
 
 ## With Rotating Agent Memory
 
-The previous agent maintained:
+The previous agent did not wait until the end of the investigation to write. It
+worked in bounded transactions:
+
+1. A small login-path batch established that credentials succeed and a session
+   is created. That task-relevant conclusion was written immediately before any
+   further inspection.
+2. Because research needed another batch, the agent created
+   `notes/active-research.md`, then compared the signing and validation paths.
+   Their shared conclusion and source map were reconciled into the handoff before
+   another command or edit.
+3. An unrelated UI stylesheet detail was discarded. It never entered task
+   memory merely because the agent happened to see it.
+
+At no point was more than one bounded research batch waiting in volatile
+context. The previous agent maintained:
 
 ```text
 goal.md

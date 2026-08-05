@@ -18,4 +18,6 @@ Build a usable task tracker web app with project lists, task CRUD, status filter
 
 ## Persistence Rule
 
-Use `goal-handoff-persistence`; goal <=6000 bytes; handoff <=64000 bytes.
+Use `goal-handoff-persistence`; immediately persist task-relevant findings after
+each bounded batch and discard unrelated material; goal <=6000 bytes; handoff
+<=64000 bytes.

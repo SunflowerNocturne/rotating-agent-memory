@@ -1,6 +1,6 @@
 ---
 name: goal-handoff-persistence
-description: Use for long-running, multi-stage, research-heavy, risky, or resumable work that could lose critical state or working understanding across context compaction, restarts, sessions, models, or agents. Maintains a small stable goal.md and a successor-oriented handoff.md containing the minimum sufficient current state, synthesized knowledge, implementation brief, and next action, with bounded archival for old history.
+description: "Use for long-running, multi-stage, research-heavy, risky, or resumable work that could lose critical state or working understanding across context compaction, restarts, sessions, models, or agents. Enforces relevance-filtered transactional checkpoints: task-relevant findings are persisted immediately before more work, unrelated material is discarded, and bounded goal.md/handoff.md snapshots remain sufficient for direct resumption."
 ---
 
 # Goal + Handoff Persistence
@@ -18,9 +18,10 @@ research notebook, status report, or history of everything that happened.
 - `handoff.md`: current system/task state, active decisions, key artifacts,
   synthesized working understanding, unresolved risks, implementation brief, and
   the single next action.
-- `notes/active-research.md`: optional source-level findings for unusually large
-  research or inspection phases. It supplements but never replaces a sufficient
-  handoff.
+- `notes/active-research.md`: source-level findings whenever research spans more
+  than one bounded batch. It contains only task-relevant current findings,
+  supplements but never replaces a sufficient handoff, and is reconciled rather
+  than used as a raw reading diary.
 - `archive/`: old snapshots retained for selective historical lookup.
 - `logs/`: optional detailed evidence only when auditability or exact
   reproduction is genuinely required.
@@ -42,38 +43,52 @@ successor should do.
    decimal byte counts. If a file is oversized, follow the Bounded Archive
    Protocol before any full read.
 
-3. **Resume-critical state-or-knowledge gate**
-   After an operation or coherent research/inspection batch, ask whether
-   resume-critical state **or working understanding** changed. This includes a
-   diagnosis, architecture or source map, source-derived constraint, intended
-   change, implementation rationale, invariant, unresolved question, or next
-   action. If none changed, do not touch `handoff.md`.
+3. **Task relevance gate**
+   Persist a finding only when it directly affects the current goal, acceptance
+   criteria, diagnosis, implementation, validation, constraint, risk, artifact,
+   rollback path, blocker, or next action. Merely interesting, adjacent,
+   speculative, raw, or unrelated material is forbidden from `handoff.md`,
+   `notes/`, `logs/`, and `archive/` by default.
 
-4. **Knowledge checkpoint gate**
-   Reconcile `handoff.md` after roughly 3-5 substantive files or sources have
-   been inspected without another durable checkpoint, when a subproblem reaches
-   a conclusion, and before moving from research/inspection to implementation.
-   Record the synthesized result, not a chronology of reads or searches.
+4. **Bounded research transaction gate**
+   Never hold more than one uncheckpointed research/inspection batch in volatile
+   context. A batch is one large source or bounded chunk, or at most two sources
+   already known to be small. Do not bulk-read or parallel-fetch many substantive
+   sources and summarize later.
 
-5. **Reconciliation gate**
+5. **Immediate persistence barrier**
+   Immediately after a read/search/fetch/inspection result, classify every new
+   finding before any further substantive tool call. Collapse related relevant
+   observations into the minimum actionable synthesis, then make it durable as
+   the next operation. Put the current conclusion and next-action implication in
+   `handoff.md`; put supporting source-level detail in
+   `notes/active-research.md`. If the note contains support a successor needs,
+   add or refresh its exact pointer in the handoff in the same checkpoint. A note
+   write alone never substitutes for an up-to-date handoff. Until this is
+   durable, do not read or search again, run commands, edit code, build, test, or
+   start another agent. Unrelated findings must be discarded, not recorded.
+
+6. **Reconciliation gate**
    When resume-critical state or working understanding changes, reconcile the
    existing snapshot. Replace, merge, or delete stale information. Do not append
    an operation record merely because an operation occurred.
 
-6. **Recovery gate**
+7. **Recovery gate**
    After context compaction, session/model/agent change, restart, or suspected
    context loss, first check file sizes, rotate oversized files if needed, then
-   read the complete bounded `goal.md` and `handoff.md`. Do not rely on a compacted
-   summary or repeat completed work before this recovery step.
+   read the complete bounded `goal.md` and `handoff.md`. If the handoff points to
+   an active research note needed for the next action, read its current bounded
+   question/findings/cursor sections. Do not restart broad source reading before
+   this recovery step.
 
-7. **No-Reread acceptance gate**
+8. **No-Reread acceptance gate**
    Before treating the handoff as current, imagine a fresh agent with no chat
    history. It must be able to perform the stated next action from `goal.md` and
    `handoff.md` without repeating the completed research or inspection phase. If
    not, the handoff is incomplete and must be expanded with the missing working
    model, source map, rationale, invariants, or unresolved questions.
 
-8. **Risk gate**
+9. **Risk gate**
    Before a risky or irreversible mutation, ensure the snapshot contains the
    relevant current state, backup or rollback path, and unresolved risk. Back up
    sensitive state before changing it.
@@ -81,10 +96,32 @@ successor should do.
 Do not copy this full contract into every task file. A one-line note naming this
 skill and the two byte limits is enough.
 
-## Handoff Admission Test
+## Finding Classification
 
-Admit a fact to `handoff.md` only when forgetting it could cause at least one of
-these outcomes:
+Classify each new finding immediately after its source result returns:
+
+- **A — relevant and new:** it changes or materially supports the current task's
+  working model, decision, implementation, validation, risk, or next action.
+  Persist it immediately before any other substantive operation.
+- **B — relevant but duplicate/superseding:** merge it into the existing current
+  finding, replace weaker/older evidence, or make no write when it adds nothing.
+  Never append a duplicate chronology.
+- **C — unrelated or non-actionable:** it does not affect the current task.
+  Discard it. Do not save it “for later” in any task-memory file.
+
+A negative result is relevant only when it rules out a live hypothesis, changes
+the plan, or prevents expensive repetition. “Interesting” is not a relevance
+criterion.
+
+Classification is per finding; persistence is per synthesis. Combine related A
+findings from the batch into the fewest conclusions needed for correct
+resumption. Do not create one handoff bullet per source, observation, or tool
+result. This compression must preserve every distinct task-relevant implication,
+constraint, and evidence dependency. Brevity never permits dropping an A
+finding; keep necessary support that cannot be represented losslessly in the
+handoff in `notes/active-research.md` and link it from the handoff.
+
+Persist a finding when forgetting it could cause at least one of these outcomes:
 
 - an incorrect or unsafe next action
 - loss of a user decision or active constraint
@@ -95,18 +132,18 @@ these outcomes:
 - concealment of an unresolved blocker, risk, or uncertainty
 - inability to resume the task directly
 
-Before writing an admitted fact, also ask:
+Before writing, require all of these:
 
-1. Is it still current?
-2. Does it belong to this task's goal?
-3. Does it replace or resolve an existing entry, or add missing resume-critical
-   understanding?
-4. Can raw detail be referenced by path instead of copied?
-5. Can it be stated in one concise bullet?
+1. It directly belongs to the current task and answers a live question or changes
+   an actionable conclusion.
+2. It is current and new, stronger, or necessary to prevent costly repetition.
+3. It can be synthesized as a conclusion rather than copied as raw source output.
+4. It is stored at the narrowest useful level: current model in `handoff.md`,
+   source-level support in `notes/active-research.md`.
+5. Existing related text is reconciled so the write does not create duplication.
 
-If the fact fails these checks, omit it. For a large research phase, place useful
-source-level detail in `notes/active-research.md` and keep the actionable synthesis
-and exact reference in the handoff.
+If any relevance requirement fails, do not persist the material anywhere in the
+task memory.
 
 ## Do Not Record By Default
 
@@ -123,6 +160,8 @@ working understanding:
 - repeated validations of the same conclusion
 - transient narration, implementation play-by-play, or chat summaries
 - full command output, long rule lists, raw logs, or copied source material
+- tangents, adjacent facts, background trivia, or speculative possibilities that
+  do not change a live task decision
 - completed next steps, resolved risks, and superseded hypotheses
 
 Never create `Completed Operations`, dated update streams, or similar
@@ -164,11 +203,40 @@ is too short when it forces a successor to repeat a completed research or
 inspection phase. Prefer one fact per bullet and no nested chronology. Reference
 `goal.md` instead of duplicating its objective and constraints.
 
-## Knowledge Checkpoints
+## Transactional Research Checkpoints
 
 Research and code reading change durable working understanding even when they do
-not change files or external state. At each checkpoint, preserve enough synthesis
-to make the next action executable:
+not change files or external state. Process them as bounded transactions.
+
+### Before A Batch
+
+1. Ensure the current research question and source cursor are already durable
+   when losing them would cause broad rediscovery.
+2. For local text, inspect size before a full read. Treat a source over 20,000
+   bytes as large and read it in bounded chunks no larger than about 200 lines or
+   20,000 bytes.
+3. For webpages, PDFs, logs, and search results, request one bounded page,
+   section, range, or query result set. Avoid unbounded fetches and large parallel
+   fan-out.
+4. Ingest one large source/chunk or at most two sources already known to be small.
+
+### Immediately After A Batch
+
+1. Classify each finding as A, B, or C using the Finding Classification above.
+2. Discard C findings.
+3. Collapse related A findings into the minimum actionable synthesis; reconcile
+   B findings rather than appending.
+4. Persist that synthesis immediately. Update `handoff.md` with the current
+   conclusion and next-action implication; store only necessary source-level
+   support in `notes/active-research.md` and link its exact section from the
+   handoff in the same checkpoint.
+5. Update the source cursor.
+6. Run the No-Reread Test for the knowledge accumulated so far.
+7. Only then may another read/search/fetch, command, edit, build, test, or agent
+   task begin.
+
+At each durable checkpoint, preserve enough relevant synthesis to make the next
+action executable:
 
 - the current diagnosis, model, or conclusion
 - the small set of relevant files, symbols, webpages, or evidence paths and why
@@ -180,6 +248,9 @@ to make the next action executable:
 Do not write "read files A, B, and C." Write what A, B, and C jointly establish.
 Before the first implementation edit, create or refresh this implementation
 brief even when no mutation has occurred yet.
+
+The invariant is: **there may never be more than one bounded, uncheckpointed
+research batch in volatile context.**
 
 ### No-Reread Test
 
@@ -223,6 +294,10 @@ Reconcile `handoff.md` at meaningful state transitions, including:
 - a milestone or task phase completes
 - before compaction, handoff, pause, or exit when current state is not yet captured
 
+The immediate persistence barrier takes precedence over this milestone list. Do
+not wait for a phase transition when a relevant finding already exists only in
+volatile context.
+
 For a long-running operation, record intent before launch only when interruption
 would leave ambiguous or risky state. Replace that intent with the outcome when
 the operation finishes. Do not retain both as permanent history.
@@ -234,7 +309,7 @@ implementation, implementation to verification, or verification to user
 confirmation, rebuild `handoff.md` as a fresh current snapshot:
 
 1. Preserve the old snapshot in `archive/` only if its history may matter.
-2. Re-evaluate every active fact with the admission test.
+2. Re-evaluate every active fact with the Finding Classification.
 3. Drop completed operations, stale evidence, resolved branches, and old next
    steps.
 4. Keep only current state, active decisions, actionable working understanding,
@@ -250,13 +325,27 @@ new request no longer advances the current `goal.md`, create a separate durable
 task directory. Add a short cross-reference only when the tasks genuinely depend
 on each other.
 
-## Optional Notes And Logs
+## Research Notes And Optional Logs
 
-For unusually large research or inspection work, create
-`notes/active-research.md` for source-level findings. Keep it organized by
-question or source, and reference exact sections from the handoff. The handoff
-must still contain enough synthesis to pass the No-Reread Test; never make a
-successor read the entire notes file merely to discover the next action.
+For research spanning more than one bounded batch, create
+`notes/active-research.md` before the second batch. Keep only task-relevant
+current material using this shape:
+
+```markdown
+# Active Research
+## Current Question
+## Current Findings
+## Source Map
+## Cursor
+## Implementation Implication
+```
+
+Reconcile this note exactly like the handoff: replace superseded findings,
+collapse duplicates, and delete tangents. When the successor needs source-level
+support from the note, reference its exact section from the handoff in the same
+checkpoint. The handoff must still contain enough synthesis to pass the
+No-Reread Test; never make a successor read the entire note merely to discover
+the next action.
 
 Create detailed logs only when required for:
 
@@ -284,7 +373,8 @@ If `goal.md` exceeds 6,000 bytes or `handoff.md` exceeds 64,000 bytes:
 4. Recreate the active file at its original path.
 5. For `goal.md`, retain only the current objective, acceptance criteria, core
    constraints, and direction.
-6. For `handoff.md`, use the required five-section shape and the admission test.
+6. For `handoff.md`, use the required five-section shape and the Finding
+   Classification.
 7. State any uncertainty caused by bounded reconstruction instead of inventing
    missing facts.
 8. Record the archive path only when a successor may need selective history.
@@ -309,6 +399,8 @@ Before pausing, handing off, or declaring completion:
 
 - check both byte limits
 - remove stale or duplicated facts
+- verify no task-relevant finding remains only in volatile context
+- verify no unrelated, merely interesting, or raw material entered task memory
 - run the No-Reread Test; the next action must not require repeating completed
   discovery
 - confirm exactly one current next action, or state that no action remains

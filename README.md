@@ -86,19 +86,35 @@ it when resume-critical state **or working understanding** changes. Replace,
 merge, or delete stale facts instead of appending a record merely because an
 operation occurred.
 
-A fact belongs in the handoff only when forgetting it could cause an incorrect
-or unsafe next action, lose a decision or rollback path, repeat expensive work,
-hide an unresolved risk, lose an implementation rationale, or prevent direct
-resumption. Do not record the bare fact that a file or webpage was read; record
-the actionable conclusion, source map, intended change, invariants, and open
-questions produced by that research. Status checks, no-op probes, repeated
-validation, raw output, completed steps, and superseded hypotheses do not belong
-there by default.
+A fact belongs in task memory only when it directly affects the current goal,
+diagnosis, implementation, validation, constraint, risk, artifact, rollback
+path, blocker, or next action. Do not record the bare fact that a file or webpage
+was read; record the actionable conclusion, source map, intended change,
+invariants, and open questions produced by that research. Status checks, raw
+output, completed steps, tangents, and merely interesting material do not belong
+there.
 
-After roughly 3-5 substantive files or sources, after resolving a research
-subproblem, and before moving from inspection to implementation, write a
-knowledge checkpoint. Synthesize what the sources establish instead of listing
-the read operations.
+Treat research as bounded transactions. Read one large source or chunk, or at
+most two sources already known to be small. Immediately classify the result:
+
+- relevant and new: persist the synthesized finding as the next operation
+- relevant but duplicate or superseding: reconcile the existing finding
+- unrelated or non-actionable: discard it instead of saving it for later
+
+Classification is per finding, but persistence is per synthesis: collapse the
+batch's related relevant observations into the fewest actionable conclusions,
+not one bullet per source or tool result. The synthesis must preserve every
+distinct task-relevant implication, constraint, and evidence dependency. Put
+necessary support that cannot be represented losslessly in the handoff in
+`notes/active-research.md` and link it from the handoff.
+
+Do not read, search, run commands, edit code, build, test, or start another agent
+while a relevant new finding exists only in volatile context. There may never be
+more than one bounded, uncheckpointed research batch. When research continues
+beyond one batch, create `notes/active-research.md` before the second batch for
+task-relevant source-level findings. Put current conclusions and next-action
+implications in `handoff.md`, and link any note section the successor needs in
+the same checkpoint. A note write alone never replaces an up-to-date handoff.
 
 Keep the active files bounded using decimal byte counts:
 

@@ -1,5 +1,31 @@
 # Changelog
 
+## v0.3.2 - Transactional Research Checkpoints
+
+This release closes the remaining pre-compaction loss window in v0.3.1. Agents
+could still read several large or parallel sources and compact before reaching
+the delayed checkpoint, losing the entire investigation and restarting it.
+
+Compared with v0.3.1:
+
+- Adds a strict relevance gate: persist only findings that directly affect the
+  current task; discard tangents, raw material, and merely interesting facts.
+- Classifies each source result as relevant-new, relevant-duplicate/superseding,
+  or unrelated/non-actionable.
+- Makes persistence of a relevant new finding the next operation after its
+  bounded read/search batch, before any further tool call, edit, build, test, or
+  agent task.
+- Allows at most one uncheckpointed batch: one large source/chunk or at most two
+  sources already known to be small.
+- Requires a reconciled `notes/active-research.md` before a second research batch
+  while keeping `handoff.md` sufficient for direct resumption.
+- Retains synthesized conclusions instead of read chronology and keeps the
+  No-Reread Test as the acceptance criterion.
+- Keeps the exact decimal limits of 6,000 bytes for `goal.md` and 64,000 bytes for
+  `handoff.md`.
+
+The v0.3.1 and all earlier tags remain available unchanged as rollback points.
+
 ## v0.3.1 - Knowledge Checkpoints
 
 This release corrects an over-compression failure in v0.3.0: agents could omit
